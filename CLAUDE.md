@@ -7,7 +7,7 @@ Vue d'ensemble, installation et routine quotidienne : voir README.md.
 
 ```bash
 uv venv --python 3.12 .venv && uv pip install --python .venv/bin/python -e ".[dev]"
-.venv/bin/pytest                       # 10 tests, aucun appel réseau
+.venv/bin/pytest                       # 11 tests, aucun appel réseau
 .venv/bin/leads -v run --no-email      # -v se place avant la sous-commande
 .venv/bin/leads list --days 1 --min-score 70
 ```
@@ -52,10 +52,13 @@ Le Python système du poste est en 3.9 : toujours passer par `.venv` (3.11 minim
 - `config.toml` est en réglages quotidiens : incrémental, `sinceDays = 3`, `maxMissions = 100`.
 - Run quotidien du 13 octobre 2026 : 8 missions livrées (0,06 $), 7 au-dessus du plancher, toutes
   déjà en base, donc 0 nouveau lead. L'acteur n'avait pas mémorisé les runs non incrémentaux.
-- En incrémental l'acteur a mis 183 s, pour une limite de 300 s sur l'appel synchrone
-  (`run-sync-get-dataset-items`) : au-delà, la source échoue. À surveiller, ou passer en
-  lancement asynchrone avec attente.
-- Trois runs au total, environ 0,54 $.
+- L'acteur est lancé en asynchrone (`/runs`, attente par `waitForFinish`, lecture du jeu de
+  données), avec abandon au bout de 900 s : l'appel synchrone d'Apify est limité à 300 s et le
+  run incrémental du 13 octobre en avait pris 183.
+- Ne pas tester en mode incrémental hors d'un vrai `leads run` : les missions livrées sont
+  mémorisées par l'acteur et ne reviendraient plus. Pour un essai, `onlyNewSinceLastRun = false`
+  et `maxMissions = 1`.
+- Quatre runs au total, environ 0,55 $.
 
 ### Scoring
 

@@ -9,6 +9,7 @@ de config.toml : sources, query, maxMissions, sinceDays, onlyNewSinceLastRun.
 from __future__ import annotations
 
 import logging
+import time
 from datetime import datetime
 
 import httpx
@@ -18,7 +19,12 @@ from ..models import Lead, Segment
 
 log = logging.getLogger(__name__)
 
-RUN_URL = "https://api.apify.com/v2/acts/{actor}/run-sync-get-dataset-items"
+API = "https://api.apify.com/v2"
+START_URL = API + "/acts/{actor}/runs"
+RUN_URL = API + "/actor-runs/{run_id}"
+ITEMS_URL = API + "/datasets/{dataset_id}/items"
+WAIT_STEP = 60    # durée maximale d'une attente côté Apify (waitForFinish)
+MAX_WAIT = 900    # au-delà, la source est abandonnée pour ce run
 
 
 def _daily_rate(item: dict) -> float | None:
@@ -62,18 +68,33 @@ def to_lead(item: dict) -> Lead:
     )
 
 
+def run_actor(cfg: ApifyConfig, client: httpx.Client) -> list[dict]:
+    """Lance l'acteur puis attend sa fin : l'appel synchrone d'Apify est limité à 300 s."""
+    # En en-tête et non dans l'URL : httpx journalise les URL complètes
+    headers = {"Authorization": f"Bearer {secret('APIFY_TOKEN', required=True)}"}
+    resp = client.post(START_URL.format(actor=cfg.actor), headers=headers, json=cfg.input)
+    resp.raise_for_status()
+    run = resp.json()["data"]
+    deadline = time.monotonic() + MAX_WAIT
+    while run["status"] in ("READY", "RUNNING"):
+        if time.monotonic() > deadline:
+            raise TimeoutError(f"run Apify {run['id']} toujours en cours après {MAX_WAIT} s")
+        resp = client.get(RUN_URL.format(run_id=run["id"]), headers=headers,
+                          params={"waitForFinish": WAIT_STEP}, timeout=WAIT_STEP + 30)
+        resp.raise_for_status()
+        run = resp.json()["data"]
+    if run["status"] != "SUCCEEDED":
+        raise RuntimeError(f"run Apify {run['id']} terminé en {run['status']}")
+    resp = client.get(ITEMS_URL.format(dataset_id=run["defaultDatasetId"]), headers=headers,
+                      params={"format": "json"})
+    resp.raise_for_status()
+    return resp.json()
+
+
 def fetch(cfg: ApifyConfig, client: httpx.Client) -> list[Lead]:
     if not cfg.enabled:
         return []
-    resp = client.post(
-        RUN_URL.format(actor=cfg.actor),
-        # En en-tête et non dans l'URL : httpx journalise les URL complètes
-        headers={"Authorization": f"Bearer {secret('APIFY_TOKEN', required=True)}"},
-        json=cfg.input,
-        timeout=300,
-    )
-    resp.raise_for_status()
-    leads = [to_lead(item) for item in resp.json()]
+    leads = [to_lead(item) for item in run_actor(cfg, client)]
     kept = [l for l in leads if l.daily_rate is None or l.daily_rate >= cfg.min_daily_rate]
     log.info("Free-Work (Apify) : %d missions, %d au-dessus du TJM plancher", len(leads), len(kept))
     return kept

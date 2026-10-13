@@ -234,14 +234,21 @@ def test_freework_apify_replays_real_sample(cfg, monkeypatch):
     cfg.apify.enabled = True
     cfg.apify.input = {"sources": ["free-work"], "maxMissions": 30}
     items = json.loads((FIXTURES / "apify_freework_sample.json").read_text(encoding="utf-8"))
+    run = {"id": "RUN1", "defaultDatasetId": "DS1"}
     with respx.mock as router:
-        route = router.post(freework_apify.RUN_URL.format(actor=cfg.apify.actor)).mock(
-            return_value=httpx.Response(201, json=items))
+        start = router.post(freework_apify.START_URL.format(actor=cfg.apify.actor)).mock(
+            return_value=httpx.Response(201, json={"data": {**run, "status": "READY"}}))
+        poll = router.get(freework_apify.RUN_URL.format(run_id="RUN1")).mock(side_effect=[
+            httpx.Response(200, json={"data": {**run, "status": "RUNNING"}}),
+            httpx.Response(200, json={"data": {**run, "status": "SUCCEEDED"}})])
+        router.get(freework_apify.ITEMS_URL.format(dataset_id="DS1")).mock(
+            return_value=httpx.Response(200, json=items))
         with httpx.Client() as client:
             leads = freework_apify.fetch(cfg.apify, client)
-    request = route.calls.last.request
-    assert "apify-token" not in str(request.url)  # le jeton ne doit pas finir dans les journaux
-    assert json.loads(request.content) == cfg.apify.input
+    assert poll.call_count == 2             # attend la fin du run avant de lire le jeu de données
+    assert json.loads(start.calls.last.request.content) == cfg.apify.input
+    for call in router.calls:               # le jeton ne doit pas finir dans les journaux
+        assert "apify-token" not in str(call.request.url)
 
     all_leads = [freework_apify.to_lead(item) for item in items]
     assert len(all_leads) == 29
@@ -281,3 +288,14 @@ def test_llm_failures_are_reported_as_fallbacks(cfg):
     lead = Lead(source="t", segment=Segment.MISSION, title="Mission IA", company="Y")
     scorer.score([lead])
     assert scorer.fallbacks == 1 and "heuristique" in lead.explanation
+
+
+def test_freework_apify_failed_run_raises(cfg, monkeypatch):
+    monkeypatch.setenv("APIFY_TOKEN", "apify-token")
+    cfg.apify.enabled = True
+    with respx.mock as router:
+        router.post(freework_apify.START_URL.format(actor=cfg.apify.actor)).mock(
+            return_value=httpx.Response(201, json={"data": {
+                "id": "RUN1", "defaultDatasetId": "DS1", "status": "FAILED"}}))
+        with httpx.Client() as client, pytest.raises(RuntimeError, match="FAILED"):
+            freework_apify.fetch(cfg.apify, client)
