@@ -1,0 +1,77 @@
+# Copier en config.toml et adapter. Les secrets vont dans .env (voir .env.example).
+
+db_path = "data/leads.sqlite"
+recontact_cooldown_days = 90
+# Fragments de noms à écarter (ESN qui sous-traitent en cascade, anciens employeurs…)
+excluded_companies = []
+
+[scoring]
+model = "claude-haiku-5-5"
+threshold = 70
+max_leads_per_run = 150
+profile = """
+Lienos (SASU, Axel) : consultant freelance senior en IA, 8+ ans de Python/IA.
+Expertise : pathologie numérique, vision par ordinateur, Multiple Instance Learning,
+self-supervised learning, Vision Transformers, pipelines multi-omics, apprentissage fédéré,
+LLM/RAG mis en production. 3 publications dont npj Precision Oncology.
+Offre : renfort ML senior, POC LLM/RAG en 4 à 6 semaines, audit data, formation.
+TJM 700 €/jour. Basé au Kremlin-Bicêtre (Île-de-France), remote possible.
+Cibles : startups/scale-ups IA-santé, PME/ETI sans équipe IA, missions freelance ML/LLM.
+"""
+
+[france_travail]
+enabled = true
+keywords = [
+  "data scientist",
+  "machine learning",
+  "intelligence artificielle",
+  "deep learning",
+  "computer vision",
+  "LLM",
+  "MLOps",
+]
+departements = []           # ex. ["75", "92", "93", "94"] ; vide = toute la France
+published_since_days = 1    # 1, 3, 7, 14 ou 31
+max_results_per_keyword = 150
+
+[rss]
+enabled = true
+# Google Alerts : créer l'alerte sur google.com/alerts, « Envoyer à : Flux RSS », coller l'URL ici.
+# Vérifier l'URL du flux Maddyness avant de l'activer.
+include_keywords = [
+  "lève", "levée", "millions", "seed", "série a", "series a",
+  "intelligence artificielle", "IA", "machine learning", "santé", "medtech",
+  "biotech", "pathologie", "diagnostic", "omics",
+]
+
+[rss.feeds]
+# maddyness = "https://www.maddyness.com/feed/"
+# alerte_ia_sante = "https://www.google.com/alerts/feeds/XXXXXXXX/YYYYYYYY"
+
+[malt_mail]
+enabled = false             # activer après avoir branché les alertes Malt sur contact@lienos.fr
+imap_host = "imap.zoho.eu"
+mailbox = "INBOX"
+sender_contains = "malt"
+lookback_days = 2
+
+[apify]
+enabled = false             # relire les CGU de Free-Work avant d'activer
+actor = "koatiromeo~french-it-contract-market"
+min_daily_rate = 600        # comparé au haut de la fourchette ; les missions sans TJM sont gardées
+# Entrée de l'acteur (0,008 $ par mission livrée) : en mode incrémental, seules les nouvelles sont facturées
+[apify.input]
+sources = ["free-work"]
+query = "machine learning"  # tous les mots doivent figurer dans le titre, la description ou les compétences
+maxMissions = 200
+sinceDays = 3
+contractorOnly = true
+onlyNewSinceLastRun = true
+computeRateBenchmark = false  # sinon 0,10 $ par benchmark de TJM
+
+[digest]
+output_dir = "output"
+send_email = false          # true une fois SMTP_USER / SMTP_PASSWORD renseignés
+smtp_host = "smtp.zoho.eu"
+smtp_port = 465
+to = "contact@lienos.fr"

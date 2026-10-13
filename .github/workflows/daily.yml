@@ -1,0 +1,53 @@
+# Exécution chaque jour ouvré à 7 h 45 (heure de Paris, été) dans un dépôt PRIVÉ.
+# La base SQLite est recommitée pour garder l'historique et les statuts d'un jour à l'autre.
+name: Digest prospects
+
+on:
+  schedule:
+    - cron: "45 5 * * 1-5"   # UTC ; 6 h 45 UTC en hiver pour garder 7 h 45 à Paris
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: digest
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install .
+      - name: Collecte, scoring et digest
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          FT_CLIENT_ID: ${{ secrets.FT_CLIENT_ID }}
+          FT_CLIENT_SECRET: ${{ secrets.FT_CLIENT_SECRET }}
+          IMAP_USER: ${{ secrets.IMAP_USER }}
+          IMAP_PASSWORD: ${{ secrets.IMAP_PASSWORD }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
+          CONFIG_TOML: ${{ vars.CONFIG_TOML }}
+        run: |
+          # config.example.toml active des sources non branchées : la variable est obligatoire
+          if [ -z "$CONFIG_TOML" ]; then echo "::error::Variable CONFIG_TOML absente (Settings > Secrets and variables > Actions > Variables)"; exit 1; fi
+          printf '%s' "$CONFIG_TOML" > config.toml
+          leads run
+      - uses: actions/upload-artifact@v4
+        with:
+          name: digest
+          path: output/
+      - name: Sauvegarder la base
+        run: |
+          git config user.name "lienos-leads-bot"
+          git config user.email "bot@lienos.fr"
+          git add -f data/leads.sqlite
+          git diff --cached --quiet || git commit -m "data: run du $(date +%F)"
+          git push

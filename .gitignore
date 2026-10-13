@@ -1,0 +1,10 @@
+.env
+config.toml
+output/
+__pycache__/
+*.egg-info/
+.venv/
+.pytest_cache/
+# data/leads.sqlite est commité par le workflow GitHub Actions (dépôt privé uniquement)
+.DS_Store
+.claude/settings.local.json
