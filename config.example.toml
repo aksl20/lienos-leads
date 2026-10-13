@@ -8,6 +8,7 @@ excluded_companies = []
 [scoring]
 model = "claude-haiku-5-5"
 threshold = 70
+threshold_levee = 55        # seuil propre aux levées de fonds (pas de mission à noter)
 max_leads_per_run = 150
 profile = """
 Lienos (SASU, Axel) : consultant freelance senior en IA, 8+ ans de Python/IA.

@@ -7,6 +7,8 @@ import tomllib
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from .models import Segment
+
 
 @dataclass
 class FranceTravailConfig:
@@ -47,8 +49,12 @@ class ApifyConfig:
 class ScoringConfig:
     model: str = "claude-haiku-5-5"
     threshold: int = 70
+    threshold_levee: int = 55  # une levée n'a pas de mission à noter : la grille la plafonne vers 65
     max_leads_per_run: int = 150
     profile: str = ""  # description du positionnement envoyée au LLM
+
+    def threshold_for(self, segment: Segment) -> int:
+        return self.threshold_levee if segment == Segment.LEVEE else self.threshold
 
 
 @dataclass

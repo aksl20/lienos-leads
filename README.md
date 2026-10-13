@@ -2,7 +2,7 @@
 
 Veille et scoring automatiques de prospects pour l'activité freelance de Lienos.
 Chaque jour ouvré, le script collecte des signaux (missions, offres d'emploi, levées de fonds),
-les enrichit, les note avec Claude et envoie un digest des leads ≥ 70/100.
+les enrichit, les note avec Claude et envoie un digest des leads ≥ 70/100 (≥ 55 pour les levées de fonds).
 La prise de contact reste manuelle.
 
 ```
@@ -19,7 +19,7 @@ python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 cp config.example.toml config.toml   # réglages
 cp .env.example .env                 # secrets
-pytest                               # 14 tests, API simulées
+pytest                               # 15 tests, API simulées
 leads run --no-email                 # premier essai : digest dans output/
 ```
 

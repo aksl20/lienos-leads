@@ -80,7 +80,8 @@ def run(cfg: Config, *, client: httpx.Client | None = None, llm_client=None,
             store.save(lead)
 
         selected = [l for l in candidates
-                    if not l.excluded_reason and (l.score or 0) >= cfg.scoring.threshold]
+                    if not l.excluded_reason
+                    and (l.score or 0) >= cfg.scoring.threshold_for(l.segment)]
         stats = {
             "collected": len(collected),
             "new": len(new),

@@ -7,7 +7,7 @@ Vue d'ensemble, installation et routine quotidienne : voir README.md.
 
 ```bash
 uv venv --python 3.12 .venv && uv pip install --python .venv/bin/python -e ".[dev]"
-.venv/bin/pytest                       # 14 tests, aucun appel réseau
+.venv/bin/pytest                       # 15 tests, aucun appel réseau
 .venv/bin/leads -v run --no-email      # -v se place avant la sous-commande
 .venv/bin/leads list --days 1 --min-score 70
 ```
@@ -38,7 +38,7 @@ Le Python système du poste est en 3.9 : toujours passer par `.venv` (3.11 minim
 | France Travail | Abandonné pour l'instant : API fermée à la souscription, sans date de réouverture |
 | Envoi du digest par e-mail (SMTP Zoho) | Validé le 13 octobre 2026 ; `send_email = true` |
 | GitHub Actions | En service depuis le 13 octobre 2026 (premier run manuel réussi) |
-| Flux RSS (levées de fonds) | Validé sur flux réels le 13 octobre 2026 ; activé, mais aucune levée n'atteint le seuil de 70 |
+| Flux RSS (levées de fonds) | Validé sur flux réels le 13 octobre 2026 ; activé, seuil propre de 55 |
 | Alertes Malt | Bloqué : aucune alerte de projet dans la boîte lue, désactivé |
 
 ### Free-Work (Apify)
@@ -85,13 +85,13 @@ Le Python système du poste est en 3.9 : toujours passer par `.venv` (3.11 minim
   de `topic_keywords` (thème), en mots entiers. Sur FrenchWeb : 10 articles retenus sur 100.
 - Une même levée reprise par plusieurs médias n'est gardée qu'une fois (30 jours, par entreprise).
 - Essai réel du 13 octobre 2026 : 31 articles, meilleur score 64. La grille pénalise les levées
-  (pas de mission freelance, startups IA déjà dotées d'une équipe) : décision d'Axel à prendre
-  sur un seuil ou une grille propres au segment « levée ».
+  (pas de mission freelance, startups IA déjà dotées d'une équipe) : seuil propre au segment,
+  `threshold_levee = 55`, décidé par Axel. Sur l'essai, 5 levées l'atteignent.
 
 ### Alertes Malt
 
-- `IMAP_USER` est un compte Gmail (`imap.gmail.com`, connexion validée), alors que la config
-  pointe sur `imap.zoho.eu`.
+- `IMAP_USER` est un compte Gmail ; `config.toml` pointe sur `imap.gmail.com` (connexion validée).
+  Axel rattache son compte Malt à cette adresse (13 octobre 2026) et reçoit peu d'alertes.
 - Cette boîte ne contient aucune alerte de projet Malt sur un an, seulement des messages de
   compte (dont des confirmations de suppression de compte). Le parseur n'a donc pas pu être
   confronté à un vrai e-mail d'alerte, et le filtre `FROM "malt"` ramènerait ces messages.

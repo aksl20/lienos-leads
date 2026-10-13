@@ -363,3 +363,8 @@ def test_homonym_is_not_a_hard_exclusion(cfg):
     store.close()
     assert homonym.excluded_reason is None and not homonym.company_info["correspondance_sure"]
     assert unique.excluded_reason == "entreprise cessée (SIRENE)"
+
+
+def test_levee_has_its_own_threshold(cfg):
+    assert cfg.scoring.threshold_for(Segment.LEVEE) == 55
+    assert cfg.scoring.threshold_for(Segment.MISSION) == cfg.scoring.threshold_for(Segment.OFFRE_EMPLOI) == 70
