@@ -36,7 +36,9 @@ Le Python système du poste est en 3.9 : toujours passer par `.venv` (3.11 minim
 | Enrichissement (Recherche d'entreprises, BODACC) | Fonctionne ; un résultat trouvé par nom n'est gardé que si le nom concorde |
 | Run quotidien en local (`leads run --no-email`) | Testé le 13 octobre 2026 en mode incrémental |
 | France Travail | Bloqué : accès à l'API restreint, demande à faire |
-| RSS, alertes Malt, envoi du digest par e-mail | Jamais testés en réel, désactivés |
+| Envoi du digest par e-mail (SMTP Zoho) | Validé le 13 octobre 2026 ; `send_email = true` |
+| GitHub Actions | Dépôt git local prêt ; dépôt GitHub privé, secrets et variable `CONFIG_TOML` à créer |
+| RSS, alertes Malt | Jamais testés en réel, désactivés |
 
 ### Free-Work (Apify)
 
@@ -74,16 +76,16 @@ Le Python système du poste est en 3.9 : toujours passer par `.venv` (3.11 minim
    `Content-Range`), fixture `tests/fixtures/france_travail_sample.json` et test respx.
    En attente de l'accès.
 2. Enrichissement sur des entreprises issues de France Travail.
-3. Flux RSS (URL Maddyness, Google Alerts), alertes Malt par IMAP, envoi SMTP du digest.
-4. Planification : dépôt git privé et GitHub Actions, ou cron local.
+3. Flux RSS (URL Maddyness, Google Alerts), alertes Malt par IMAP.
+4. Premier run GitHub Actions (`workflow_dispatch`) une fois le dépôt privé créé.
 
 ## Défauts connus
 
 - Enrichissement : les sociétés étrangères et les plateformes ne sont pas trouvées, et un nom
   commercial différent de la raison sociale est désormais ignoré plutôt que mal apparié.
-- `.github/workflows/daily.yml` copie `config.example.toml` (France Travail et RSS activés,
-  Apify désactivé) : sans variable `CONFIG_TOML`, le run planifié ne collecte rien d'utile.
-  Le dossier n'est pas encore un dépôt git.
+- `.github/workflows/daily.yml` échoue volontairement sans variable `CONFIG_TOML` : après toute
+  modification de `config.toml`, recoller son contenu dans la variable du dépôt GitHub.
+- Le cron du workflow (5 h 45 UTC) correspond à 7 h 45 à Paris en heure d'été seulement.
 - Sur Free-Work, l'« entreprise » est presque toujours un intermédiaire (ESN, cabinet) :
   l'enrichissement et le critère « pas d'équipe IA interne » portent sur lui, pas sur le client final.
 - Un lead déjà en base n'est jamais renoté par `leads run` ; il n'existe pas de commande de renotation.
