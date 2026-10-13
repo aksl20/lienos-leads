@@ -62,6 +62,13 @@ mailbox = "INBOX"
 sender_contains = "malt"
 lookback_days = 2
 
+[linkedin_mail]
+enabled = false             # InMails LinkedIn redirigés vers la boîte IMAP_USER (lecture seule)
+imap_host = "imap.gmail.com"
+mailbox = "INBOX"
+sender = "hit-reply@linkedin.com"
+lookback_days = 3
+
 [apify]
 enabled = false             # relire les CGU de Free-Work avant d'activer
 actor = "koatiromeo~french-it-contract-market"

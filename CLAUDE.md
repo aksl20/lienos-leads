@@ -7,7 +7,7 @@ Vue d'ensemble, installation et routine quotidienne : voir README.md.
 
 ```bash
 uv venv --python 3.12 .venv && uv pip install --python .venv/bin/python -e ".[dev]"
-.venv/bin/pytest                       # 15 tests, aucun appel réseau
+.venv/bin/pytest                       # 16 tests, aucun appel réseau
 .venv/bin/leads -v run --no-email      # -v se place avant la sous-commande
 .venv/bin/leads list --days 1 --min-score 70
 ```
@@ -40,6 +40,7 @@ Le Python système du poste est en 3.9 : toujours passer par `.venv` (3.11 minim
 | GitHub Actions | En service depuis le 13 octobre 2026 (premier run manuel réussi) |
 | Flux RSS (levées de fonds) | Validé sur flux réels le 13 octobre 2026 ; activé, seuil propre de 55 |
 | Alertes Malt | Bloqué : aucune alerte de projet dans la boîte lue, désactivé |
+| InMails LinkedIn | Parseur écrit le 13 octobre 2026 ; désactivé en attendant un premier contact réel |
 
 ### Free-Work (Apify)
 
@@ -96,10 +97,25 @@ Le Python système du poste est en 3.9 : toujours passer par `.venv` (3.11 minim
   compte (dont des confirmations de suppression de compte). Le parseur n'a donc pas pu être
   confronté à un vrai e-mail d'alerte, et le filtre `FROM "malt"` ramènerait ces messages.
 
+### InMails LinkedIn
+
+- Axel redirige `hit-reply@linkedin.com` de son autre boîte vers Gmail (INBOX, expéditeur conservé).
+  C'est l'adresse des InMails, premiers contacts compris ; le texte complet est dans l'e-mail.
+- `messages-noreply@` n'envoie que des résumés de réseau, et `messaging-digest-noreply@` (messages
+  classiques) ne contient pas le texte : ignorés. Le tri se fait sur le lien de conversation et
+  l'en-tête `X-LinkedIn-Template`, pas sur l'expéditeur seul.
+- Un lead par conversation (uid dérivé de l'identifiant du fil). Les modèles `reply_to_member`
+  (réponse d'un recruteur à un message d'Axel) sont ignorés.
+- Extraction vérifiée sur 6 vrais InMails, qui étaient tous des réponses : le modèle d'un premier
+  contact n'a pas encore été vu. La fixture est reconstruite, sans donnée réelle.
+- Pour activer : `[linkedin_mail] enabled = true`, puis secrets `IMAP_USER` et `IMAP_PASSWORD`
+  sur GitHub. Ne rien stocker d'autre que l'objet, le texte et le lien.
+
 ## À valider
 
 1. Premier run quotidien avec les 5 mots-clés Free-Work en mode incrémental (durée, coût).
-2. Alertes Malt : il faut un vrai e-mail d'alerte et savoir quelle boîte les reçoit.
+2. Alertes Malt : il faut un vrai e-mail d'alerte (le compte Malt est rattaché à Gmail).
+4. InMails LinkedIn : contrôler le premier vrai premier contact reçu, puis activer.
 3. France Travail : tout reste à valider si l'API rouvre.
 
 ## Défauts connus

@@ -37,6 +37,15 @@ class MaltMailConfig:
 
 
 @dataclass
+class LinkedinMailConfig:
+    enabled: bool = False
+    imap_host: str = "imap.gmail.com"
+    mailbox: str = "INBOX"
+    sender: str = "hit-reply@linkedin.com"  # InMails ; les autres expéditeurs n'ont pas le texte
+    lookback_days: int = 3
+
+
+@dataclass
 class ApifyConfig:
     enabled: bool = False
     actor: str = "koatiromeo~french-it-contract-market"
@@ -74,6 +83,7 @@ class Config:
     france_travail: FranceTravailConfig = field(default_factory=FranceTravailConfig)
     rss: RssConfig = field(default_factory=RssConfig)
     malt_mail: MaltMailConfig = field(default_factory=MaltMailConfig)
+    linkedin_mail: LinkedinMailConfig = field(default_factory=LinkedinMailConfig)
     apify: ApifyConfig = field(default_factory=ApifyConfig)
     scoring: ScoringConfig = field(default_factory=ScoringConfig)
     digest: DigestConfig = field(default_factory=DigestConfig)
@@ -85,6 +95,7 @@ class Config:
             "france_travail": FranceTravailConfig,
             "rss": RssConfig,
             "malt_mail": MaltMailConfig,
+            "linkedin_mail": LinkedinMailConfig,
             "apify": ApifyConfig,
             "scoring": ScoringConfig,
             "digest": DigestConfig,

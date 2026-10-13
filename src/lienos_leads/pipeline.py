@@ -12,7 +12,7 @@ from .digest import send_email, write_files
 from .enrich import Enricher
 from .models import Lead, Segment
 from .scoring import Scorer
-from .sources import france_travail, freework_apify, malt_mail, rss
+from .sources import france_travail, freework_apify, linkedin_mail, malt_mail, rss
 from .store import Store
 
 log = logging.getLogger(__name__)
@@ -26,6 +26,7 @@ def collect(cfg: Config, client: httpx.Client) -> list[Lead]:
         ("France Travail", lambda: france_travail.fetch(cfg.france_travail, client)),
         ("RSS", lambda: rss.fetch(cfg.rss, client)),
         ("Malt (e-mails)", lambda: malt_mail.fetch(cfg.malt_mail)),
+        ("LinkedIn (InMails)", lambda: linkedin_mail.fetch(cfg.linkedin_mail)),
         ("Free-Work (Apify)", lambda: freework_apify.fetch(cfg.apify, client)),
     ]
     leads: list[Lead] = []

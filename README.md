@@ -19,7 +19,7 @@ python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 cp config.example.toml config.toml   # réglages
 cp .env.example .env                 # secrets
-pytest                               # 15 tests, API simulées
+pytest                               # 16 tests, API simulées
 leads run --no-email                 # premier essai : digest dans output/
 ```
 
@@ -81,7 +81,8 @@ contactée il y a moins de 90 jours, liste `excluded_companies`.
 ## RGPD
 
 Données stockées : entreprise, intitulé, lien, score ; au plus 3 dirigeants (nom et fonction,
-issus du registre public). Aucune collecte LinkedIn. Pensez à tenir un registre du traitement
+issus du registre public). Aucune collecte sur LinkedIn : seuls les InMails qui vous sont
+adressés sont lus, dans vos propres notifications e-mail (objet, texte, lien de conversation). Pensez à tenir un registre du traitement
 et à purger les contacts sans réponse après 12 mois.
 
 ## Structure
@@ -91,6 +92,7 @@ src/lienos_leads/
   sources/france_travail.py  API Offres d'emploi v2 (OAuth2, pagination 206)
   sources/rss.py             Google Alerts, Maddyness, tout flux RSS
   sources/malt_mail.py       Alertes Malt par IMAP (lecture seule)
+  sources/linkedin_mail.py   InMails LinkedIn reçus par e-mail (IMAP, lecture seule)
   sources/freework_apify.py  Free-Work via Apify (optionnel)
   enrich.py                  Recherche d'entreprises + BODACC + exclusions
   scoring.py                 Prompt, grille, boucle d'apprentissage, repli heuristique

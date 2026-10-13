@@ -16,7 +16,7 @@ from lienos_leads.enrich import BODACC_URL, SEARCH_URL as ENTREPRISES_URL, Enric
 from lienos_leads.models import Lead, Segment, Status
 from lienos_leads.pipeline import run
 from lienos_leads.scoring import Scorer, parse_response
-from lienos_leads.sources import france_travail, freework_apify, malt_mail, rss
+from lienos_leads.sources import france_travail, freework_apify, linkedin_mail, malt_mail, rss
 from lienos_leads.store import Store
 
 NOW = datetime.now(timezone.utc)
@@ -368,3 +368,23 @@ def test_homonym_is_not_a_hard_exclusion(cfg):
 def test_levee_has_its_own_threshold(cfg):
     assert cfg.scoring.threshold_for(Segment.LEVEE) == 55
     assert cfg.scoring.threshold_for(Segment.MISSION) == cfg.scoring.threshold_for(Segment.OFFRE_EMPLOI) == 70
+
+
+def test_linkedin_inmail_parser():
+    sample = (FIXTURES / "linkedin_inmail_sample.eml").read_text(encoding="utf-8")
+    lead = linkedin_mail.parse_message(sample.format(template="email_hire_inmail_01").encode())
+    assert lead.title == "Mission freelance ML Engineer – imagerie médicale, 6 mois"
+    assert lead.url.startswith("https://www.linkedin.com/messaging/thread/2-")
+    assert lead.description.startswith("Bonjour Axel,") and lead.description.endswith("Camille")
+    assert "Se désabonner" not in lead.description and "midToken" not in lead.description
+    assert lead.source == "linkedin" and lead.published_at.year == 2026
+
+    # Un second message dans la même conversation ne crée pas un second lead
+    again = sample.replace("Subject: =?UTF-8?Q?Mission", "Subject: =?UTF-8?Q?Relance_Mission")
+    assert linkedin_mail.parse_message(again.format(template="email_hire_inmail_01").encode()).uid == lead.uid
+
+    # Réponse dans une conversation déjà engagée, ou e-mail LinkedIn sans lien de conversation
+    reply = sample.format(template="email_hire_inmail_reply_to_member_01").encode()
+    assert linkedin_mail.parse_message(reply) is None
+    digest = b"From: LinkedIn <messages-noreply@linkedin.com>\r\nSubject: Votre reseau\r\n\r\n2 new connections"
+    assert linkedin_mail.parse_message(digest) is None
