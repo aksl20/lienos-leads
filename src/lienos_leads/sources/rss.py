@@ -45,15 +45,20 @@ def _published(entry) -> datetime | None:
     return datetime(*struct[:6], tzinfo=timezone.utc)
 
 
-def parse_feed(name: str, content: bytes | str, include_keywords: list[str]) -> list[Lead]:
+def _mentions(haystack: str, keywords: list[str]) -> bool:
+    """Mots entiers seulement : « IA » ne doit pas être trouvé dans « partenariat »."""
+    return not keywords or any(f" {normalize(k)} " in haystack for k in keywords)
+
+
+def parse_feed(name: str, content: bytes | str, include_keywords: list[str],
+               topic_keywords: list[str] | None = None) -> list[Lead]:
     feed = feedparser.parse(content)
-    wanted = [normalize(k) for k in include_keywords]
     leads = []
     for entry in feed.entries:
         title = _clean(entry.get("title", ""))
         summary = _clean(entry.get("summary", ""))
-        haystack = normalize(f"{title} {summary}")
-        if wanted and not any(k in haystack for k in wanted):
+        haystack = f" {normalize(f'{title} {summary}')} "
+        if not (_mentions(haystack, include_keywords) and _mentions(haystack, topic_keywords or [])):
             continue
         leads.append(
             Lead(
@@ -79,7 +84,7 @@ def fetch(cfg: RssConfig, client: httpx.Client) -> list[Lead]:
         except httpx.HTTPError as exc:  # un flux en panne ne bloque pas les autres
             log.warning("Flux %s indisponible : %s", name, exc)
             continue
-        found = parse_feed(name, resp.content, cfg.include_keywords)
+        found = parse_feed(name, resp.content, cfg.include_keywords, cfg.topic_keywords)
         log.info("Flux %s : %d articles retenus", name, len(found))
         leads.extend(found)
     return leads

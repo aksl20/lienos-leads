@@ -21,7 +21,8 @@ class FranceTravailConfig:
 class RssConfig:
     enabled: bool = True
     feeds: dict[str, str] = field(default_factory=dict)  # nom -> URL
-    include_keywords: list[str] = field(default_factory=list)  # filtre : au moins un mot présent
+    include_keywords: list[str] = field(default_factory=list)  # signal : au moins un mot présent
+    topic_keywords: list[str] = field(default_factory=list)  # thème : au moins un aussi, si renseigné
 
 
 @dataclass
@@ -38,6 +39,7 @@ class ApifyConfig:
     enabled: bool = False
     actor: str = "koatiromeo~french-it-contract-market"
     input: dict = field(default_factory=dict)
+    queries: list[str] = field(default_factory=list)  # un run par mot-clé ; vide = input tel quel
     min_daily_rate: float = 600
 
 

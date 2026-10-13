@@ -19,7 +19,7 @@ python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 cp config.example.toml config.toml   # réglages
 cp .env.example .env                 # secrets
-pytest                               # 11 tests, API simulées
+pytest                               # 14 tests, API simulées
 leads run --no-email                 # premier essai : digest dans output/
 ```
 

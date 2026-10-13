@@ -290,12 +290,76 @@ def test_llm_failures_are_reported_as_fallbacks(cfg):
     assert scorer.fallbacks == 1 and "heuristique" in lead.explanation
 
 
-def test_freework_apify_failed_run_raises(cfg, monkeypatch):
+def test_freework_apify_one_run_per_query_survives_a_failure(cfg, monkeypatch):
     monkeypatch.setenv("APIFY_TOKEN", "apify-token")
     cfg.apify.enabled = True
+    cfg.apify.input = {"sources": ["free-work"], "maxMissions": 50}
+    cfg.apify.queries = ["machine learning", "LLM", "deep learning"]
+    items = json.loads((FIXTURES / "apify_freework_sample.json").read_text(encoding="utf-8"))
+
+    def start(request):
+        query = json.loads(request.content)["query"]
+        status = "FAILED" if query == "deep learning" else "SUCCEEDED"
+        return httpx.Response(201, json={"data": {
+            "id": f"run-{query}", "defaultDatasetId": f"ds-{query}", "status": status}})
+
     with respx.mock as router:
-        router.post(freework_apify.START_URL.format(actor=cfg.apify.actor)).mock(
-            return_value=httpx.Response(201, json={"data": {
-                "id": "RUN1", "defaultDatasetId": "DS1", "status": "FAILED"}}))
-        with httpx.Client() as client, pytest.raises(RuntimeError, match="FAILED"):
-            freework_apify.fetch(cfg.apify, client)
+        route = router.post(freework_apify.START_URL.format(actor=cfg.apify.actor)).mock(side_effect=start)
+        # Les deux mots-clés renvoient des missions en commun : elles ne comptent qu'une fois
+        router.get(freework_apify.ITEMS_URL.format(dataset_id="ds-machine learning")).mock(
+            return_value=httpx.Response(200, json=items[:20]))
+        router.get(freework_apify.ITEMS_URL.format(dataset_id="ds-LLM")).mock(
+            return_value=httpx.Response(200, json=items[10:]))
+        with httpx.Client() as client:
+            leads = freework_apify.fetch(cfg.apify, client)
+    assert route.call_count == 3
+    assert len(leads) == 17    # même résultat que la fixture complète, malgré le run en échec
+
+
+def test_rss_real_sample_needs_funding_signal_and_topic():
+    content = (FIXTURES / "rss_frenchweb_sample.xml").read_bytes()
+    signal, topic = ["lève", "millions"], ["IA", "santé", "cardiologie"]
+    assert len(rss.parse_feed("frenchweb", content, [])) == 6
+    kept = rss.parse_feed("frenchweb", content, signal, topic)
+    titles = " | ".join(l.title for l in kept)
+    assert "EDISON IA" in titles and "IMPLICITY" in titles
+    assert "CARBONFARM" not in titles          # levée sans rapport avec l'IA ou la santé
+    assert "consommateurs" not in titles       # parle d'IA mais pas de financement
+    assert all(l.published_at and l.url.startswith("https://www.frenchweb.fr/") for l in kept)
+    # « IA » est un mot entier : il ne doit pas être trouvé dans « matériel » ou « sociaux »
+    assert not rss.parse_feed("frenchweb", content, ["sécuriser"], ["IA"])
+
+
+def test_same_funding_round_from_two_outlets_is_kept_once(cfg):
+    cfg.france_travail.enabled = False
+    cfg.rss.feeds = {"a": "https://feeds.example.org/a", "b": "https://feeds.example.org/b"}
+    item = ("<item><title>{t}</title><link>https://example.org/{u}</link>"
+            "<description>Pathologie numérique.</description></item>")
+    feed = '<?xml version="1.0"?><rss version="2.0"><channel><title>x</title>{}</channel></rss>'
+    with respx.mock(assert_all_called=False) as router:
+        mock_apis(router)
+        router.get("https://feeds.example.org/a").mock(return_value=httpx.Response(
+            200, text=feed.format(item.format(t="PathoAI lève 5 millions", u="a"))))
+        router.get("https://feeds.example.org/b").mock(return_value=httpx.Response(
+            200, text=feed.format(item.format(t="La startup PathoAI lève 5 millions d'euros", u="b"))))
+        with httpx.Client() as client:
+            stats = run(cfg, client=client, llm_client=FakeLLM(), send=False)
+    assert stats["collected"] == 2 and stats["selected"] == 1 and stats["excluded"] == 1
+
+
+def test_homonym_is_not_a_hard_exclusion(cfg):
+    store = Store(cfg.db_path)
+    ceased = entreprise("555555555", "PRIMO", etat="C")
+    with respx.mock(assert_all_called=False) as router:
+        router.get(ENTREPRISES_URL).mock(side_effect=[
+            httpx.Response(200, json={**ceased, "total_results": 12}),
+            httpx.Response(200, json={**ceased, "total_results": 1}),
+        ])
+        with httpx.Client() as client:
+            homonym = Lead(source="t", segment=Segment.LEVEE, title="PRIMO lève 7 M€", company="PRIMO")
+            Enricher(client, store, 90).apply(homonym)
+            unique = Lead(source="t", segment=Segment.LEVEE, title="PRIMO lève 7 M€", company="PRIMO")
+            Enricher(client, store, 90).apply(unique)
+    store.close()
+    assert homonym.excluded_reason is None and not homonym.company_info["correspondance_sure"]
+    assert unique.excluded_reason == "entreprise cessée (SIRENE)"

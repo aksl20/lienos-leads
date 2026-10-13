@@ -58,10 +58,12 @@ class Enricher:
         try:
             resp = self.client.get(SEARCH_URL, params={"q": query, "per_page": 1, "page": 1})
             resp.raise_for_status()
-            results = resp.json().get("results", [])
+            payload = resp.json()
+            results = payload.get("results", [])
+            total = payload.get("total_results", len(results))
         except httpx.HTTPError as exc:
             log.warning("Recherche d'entreprises indisponible pour %r : %s", query, exc)
-            results = []
+            results, total = [], 0
         info = None
         if results and not siret and not _same_company(company, results[0]):
             log.info("Recherche d'entreprises : %r ne correspond pas à %r, ignoré",
@@ -72,6 +74,8 @@ class Enricher:
             siege = r.get("siege") or {}
             info = {
                 "siren": r.get("siren"),
+                # Un nom porté par plusieurs entreprises ne suffit pas à identifier la bonne
+                "correspondance_sure": bool(siret) or total == 1,
                 "nom": r.get("nom_complet"),
                 "naf": r.get("activite_principale"),
                 "categorie": r.get("categorie_entreprise"),
@@ -116,10 +120,12 @@ class Enricher:
             if info:
                 lead.company_info = info
                 lead.siren = info["siren"]
-                if info.get("etat") == "C":
+                if not info["correspondance_sure"]:
+                    pass  # homonyme possible : pas d'exclusion dure sur cette base
+                elif info.get("etat") == "C":
                     lead.excluded_reason = "entreprise cessée (SIRENE)"
                     return lead
-                if lead.siren and self.in_collective_procedure(lead.siren):
+                elif lead.siren and self.in_collective_procedure(lead.siren):
                     lead.excluded_reason = "procédure collective au BODACC"
                     return lead
         if self.store.recently_contacted(lead.company_key, self.cooldown_days):

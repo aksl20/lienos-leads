@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	
+	xmlns:georss="http://www.georss.org/georss"
+	xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
+	>
+
+<channel>
+	<title>FRENCHWEB.FR : innovation, tech, network</title>
+	<atom:link href="https://www.frenchweb.fr/feed" rel="self" type="application/rss+xml" />
+	<link>https://www.frenchweb.fr/</link>
+	<description>Le media de l’écosystème tech &#38; innovation français</description>
+	<lastBuildDate>Tue, 13 Oct 2026 07:33:38 +0000</lastBuildDate>
+	<language>fr-FR</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=6.1.1</generator>
+
+<image>
+	<url>https://i0.wp.com/www.frenchweb.fr/wp-content/uploads/2017/09/cropped-frenchwebicon.png?fit=32%2C32&#038;ssl=1</url>
+	<title>FRENCHWEB.FR : innovation, tech, network</title>
+	<link>https://www.frenchweb.fr/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+<site xmlns="com-wordpress:feed-additions:1">201659302</site>	<item>
+		<title>EDISON IA lève 1 million d&#8217;euros pour faire passer les PME de l’IA test à l’IA rentable</title>
+		<link>https://www.frenchweb.fr/edison-ia-leve-1-me-pour-faire-passer-les-pme-de-lia-test-a-lia-rentable/463728</link>
+		
+		<pubDate>Wed, 30 Sep 2026 06:20:30 +0000</pubDate>
+				<category><![CDATA[AI SHIFT]]></category>
+		<category><![CDATA[IN THE LOOP]]></category>
+		<category><![CDATA[Anaïs Vivion]]></category>
+		<category><![CDATA[anthropic]]></category>
+		<category><![CDATA[Bpifrance]]></category>
+		<category><![CDATA[CIC Ouest]]></category>
+		<category><![CDATA[Diabolocom]]></category>
+		<category><![CDATA[Edison IA]]></category>
+		<category><![CDATA[Go capital]]></category>
+		<category><![CDATA[julien hervouet]]></category>
+		<category><![CDATA[Maif]]></category>
+		<category><![CDATA[microsoft]]></category>
+		<category><![CDATA[Mistral AI]]></category>
+		<category><![CDATA[OpenAI]]></category>
+		<category><![CDATA[Parloa]]></category>
+		<category><![CDATA[Scaleway]]></category>
+		<guid isPermaLink="false">https://www.frenchweb.fr/?p=463728</guid>
+
+					<description><![CDATA[<p>Les entreprises n’ont jamais eu accès aussi facilement aux outils d’intelligence artificielle, mais peinent encore à les transformer en gains opérationnels mesurables. À Nantes, Edison IA propose aux PME et ETI un modèle fondé sur l’intégration d’agents aux processus métiers, un accompagnement annuel et une garantie de retour sur investissement sous six mois. Si équiper &#8230;</p>
+<p>L’article <a rel="nofollow" href="https://www.frenchweb.fr/edison-ia-leve-1-me-pour-faire-passer-les-pme-de-lia-test-a-lia-rentable/463728">EDISON IA lève 1 million d&rsquo;euros pour faire passer les PME de l’IA test à l’IA rentable</a> est apparu en premier sur <a rel="nofollow" href="https://www.frenchweb.fr">FRENCHWEB.FR : innovation, tech, network</a>.</p>
+]]></description>
+		
+		
+		
+		<post-id xmlns="com-wordpress:feed-additions:1">463728</post-id>	</item>
+<item>
+		<title>IMPLICITY lève 35 millions d’euros pour passer du tri des alertes à la cardiologie prédictive</title>
+		<link>https://www.frenchweb.fr/implicity-leve-35-millions-deuros-pour-passer-du-tri-des-alertes-a-la-cardiologie-predictive/463361</link>
+		
+		<pubDate>Thu, 10 Sep 2026 05:09:36 +0000</pubDate>
+				<category><![CDATA[IN THE LOOP]]></category>
+		<category><![CDATA[LIFE SCIENCES LOOP]]></category>
+		<category><![CDATA[MEDTECH]]></category>
+		<category><![CDATA[Abbott]]></category>
+		<category><![CDATA[allemagne]]></category>
+		<category><![CDATA[Arnaud Rosier]]></category>
+		<category><![CDATA[Biotronik]]></category>
+		<category><![CDATA[Boston Scientific]]></category>
+		<category><![CDATA[David Perlmutter]]></category>
+		<category><![CDATA[États-Unis]]></category>
+		<category><![CDATA[EVIDENCE-RM]]></category>
+		<category><![CDATA[FDA]]></category>
+		<category><![CDATA[Five Arrows]]></category>
+		<category><![CDATA[France]]></category>
+		<category><![CDATA[Heart Rhythm]]></category>
+		<category><![CDATA[Implicity]]></category>
+		<category><![CDATA[Iris]]></category>
+		<category><![CDATA[Medicare]]></category>
+		<category><![CDATA[Medtronic]]></category>
+		<category><![CDATA[MicroPort]]></category>
+		<category><![CDATA[Morgan Stanley]]></category>
+		<category><![CDATA[Murj]]></category>
+		<category><![CDATA[Octagos Health]]></category>
+		<category><![CDATA[PaceMate]]></category>
+		<category><![CDATA[Rhythm360]]></category>
+		<category><![CDATA[Rothschild & Co]]></category>
+		<category><![CDATA[Vector Remote Care]]></category>
+		<guid isPermaLink="false">https://www.frenchweb.fr/?p=463361</guid>
+
+					<description><![CDATA[<p>La medtech française Implicity lève 35 millions d’euros auprès d’IRIS et de Five Arrows pour accélérer son développement aux États-Unis. Fondée par le cardiologue Arnaud Rosier, sa plateforme agrège les données produites par les dispositifs cardiaques de différents fabricants, puis aide les équipes médicales à hiérarchiser leurs alertes. Déployée dans plus de 250 centres auprès &#8230;</p>
+<p>L’article <a rel="nofollow" href="https://www.frenchweb.fr/implicity-leve-35-millions-deuros-pour-passer-du-tri-des-alertes-a-la-cardiologie-predictive/463361">IMPLICITY lève 35 millions d’euros pour passer du tri des alertes à la cardiologie prédictive</a> est apparu en premier sur <a rel="nofollow" href="https://www.frenchweb.fr">FRENCHWEB.FR : innovation, tech, network</a>.</p>
+]]></description>
+		
+		
+		
+		<post-id xmlns="com-wordpress:feed-additions:1">463361</post-id>	</item>
+<item>
+		<title>CARBONFARM lève 7 millions d&#8217;euros pour rendre la réduction du méthane des rizières mesurable et finançable</title>
+		<link>https://www.frenchweb.fr/carbonfarm-leve-7-millions-deuros-pour-rendre-la-reduction-du-methane-des-rizieres-mesurable-et-financable/463919</link>
+		
+		<pubDate>Tue, 13 Oct 2026 06:55:49 +0000</pubDate>
+				<category><![CDATA[AGTECH]]></category>
+		<category><![CDATA[FRANCE]]></category>
+		<category><![CDATA[IN THE LOOP]]></category>
+		<category><![CDATA[LES LEVEES DE FONDS]]></category>
+		<category><![CDATA[Albo]]></category>
+		<category><![CDATA[BASF Agricultural Solutions]]></category>
+		<category><![CDATA[Bpifrance]]></category>
+		<category><![CDATA[CarbonFarm]]></category>
+		<category><![CDATA[Colam Impact]]></category>
+		<category><![CDATA[Diageo]]></category>
+		<category><![CDATA[Ebro]]></category>
+		<category><![CDATA[elea]]></category>
+		<category><![CDATA[GHG Protocol]]></category>
+		<category><![CDATA[google]]></category>
+		<category><![CDATA[IRRI]]></category>
+		<category><![CDATA[James Hastwell]]></category>
+		<category><![CDATA[Livelihoods Funds]]></category>
+		<category><![CDATA[makesense]]></category>
+		<category><![CDATA[Mars Food]]></category>
+		<category><![CDATA[Mitti Labs]]></category>
+		<category><![CDATA[Proparco]]></category>
+		<category><![CDATA[Racine2]]></category>
+		<category><![CDATA[Regrow Ag]]></category>
+		<category><![CDATA[Rize]]></category>
+		<category><![CDATA[Serena]]></category>
+		<category><![CDATA[Suma Capital]]></category>
+		<category><![CDATA[Techmind]]></category>
+		<category><![CDATA[Tilda]]></category>
+		<category><![CDATA[Vassily Carantino]]></category>
+		<category><![CDATA[Verra]]></category>
+		<category><![CDATA[Working Capital Fund]]></category>
+		<guid isPermaLink="false">https://www.frenchweb.fr/?p=463919</guid>
+
+					<description><![CDATA[<p>La société française annonce une série A de 7 millions d’euros pour développer ses programmes de décarbonation du riz. Son approche associe suivi satellitaire, modélisation des émissions et financement climatique, avec un enjeu : déployer des pratiques économes en eau auprès de petites exploitations, tout en produisant des résultats vérifiables. CarbonFarm : chiffres clés 7 &#8230;</p>
+<p>L’article <a rel="nofollow" href="https://www.frenchweb.fr/carbonfarm-leve-7-millions-deuros-pour-rendre-la-reduction-du-methane-des-rizieres-mesurable-et-financable/463919">CARBONFARM lève 7 millions d&rsquo;euros pour rendre la réduction du méthane des rizières mesurable et finançable</a> est apparu en premier sur <a rel="nofollow" href="https://www.frenchweb.fr">FRENCHWEB.FR : innovation, tech, network</a>.</p>
+]]></description>
+		
+		
+		
+		<post-id xmlns="com-wordpress:feed-additions:1">463919</post-id>	</item>
+<item>
+		<title>HYLIGHT lève 13 millions d&#8217;euros pour faire du dirigeable un outil de maintenance industrielle</title>
+		<link>https://www.frenchweb.fr/hylight-leve-13-millions-deuros-pour-faire-du-dirigeable-un-outil-de-maintenance-industrielle/463913</link>
+		
+		<pubDate>Tue, 13 Oct 2026 06:04:56 +0000</pubDate>
+				<category><![CDATA[AEROTECH]]></category>
+		<category><![CDATA[FRANCE]]></category>
+		<category><![CDATA[IN THE LOOP]]></category>
+		<category><![CDATA[LES LEVEES DE FONDS]]></category>
+		<category><![CDATA[AiDASH]]></category>
+		<category><![CDATA[Alteia]]></category>
+		<category><![CDATA[Bridger Photonics]]></category>
+		<category><![CDATA[Cloudline]]></category>
+		<category><![CDATA[Delair]]></category>
+		<category><![CDATA[DRW Venture Capital]]></category>
+		<category><![CDATA[Enedis]]></category>
+		<category><![CDATA[Hepta Insights]]></category>
+		<category><![CDATA[HyLight]]></category>
+		<category><![CDATA[Josef Rokusek]]></category>
+		<category><![CDATA[Kelluu]]></category>
+		<category><![CDATA[Martin Bocken]]></category>
+		<category><![CDATA[NaTran]]></category>
+		<category><![CDATA[Ring Capital]]></category>
+		<category><![CDATA[Rubio Impact Ventures]]></category>
+		<category><![CDATA[Schneider Electric]]></category>
+		<category><![CDATA[Sharper Shape]]></category>
+		<category><![CDATA[SNCF Réseau]]></category>
+		<category><![CDATA[Teampact Ventures]]></category>
+		<category><![CDATA[Teréga]]></category>
+		<category><![CDATA[Thomas Laporte]]></category>
+		<category><![CDATA[Vinci]]></category>
+		<category><![CDATA[y combinator]]></category>
+		<guid isPermaLink="false">https://www.frenchweb.fr/?p=463913</guid>
+
+					<description><![CDATA[<p>Après ses premières missions pour de grands gestionnaires de réseaux, HyLight veut augmenter sa capacité d’inspection en Europe. La startup annonce 13 millions d’euros pour industrialiser sa flotte de dirigeables autonomes et renforcer l’analyse des données collectées. Son prochain cap sera de rendre ce service reproductible, avec quinze appareils opérés simultanément en 2027. HyLight : &#8230;</p>
+<p>L’article <a rel="nofollow" href="https://www.frenchweb.fr/hylight-leve-13-millions-deuros-pour-faire-du-dirigeable-un-outil-de-maintenance-industrielle/463913">HYLIGHT lève 13 millions d&rsquo;euros pour faire du dirigeable un outil de maintenance industrielle</a> est apparu en premier sur <a rel="nofollow" href="https://www.frenchweb.fr">FRENCHWEB.FR : innovation, tech, network</a>.</p>
+]]></description>
+		
+		
+		
+		<post-id xmlns="com-wordpress:feed-additions:1">463913</post-id>	</item>
+<item>
+		<title>Études consommateurs : ce que l’IA change dans l’économie du métier</title>
+		<link>https://www.frenchweb.fr/etudes-consommateurs-ce-que-lia-change-dans-leconomie-du-metier/463865</link>
+		
+		<pubDate>Fri, 09 Oct 2026 06:51:37 +0000</pubDate>
+				<category><![CDATA[EXPERIENCES]]></category>
+		<category><![CDATA[MARKETING IRL]]></category>
+		<category><![CDATA[CNIL]]></category>
+		<category><![CDATA[ESOMAR]]></category>
+		<category><![CDATA[GetWhy]]></category>
+		<category><![CDATA[ipsos]]></category>
+		<category><![CDATA[kantar]]></category>
+		<category><![CDATA[Listen Labs]]></category>
+		<category><![CDATA[Outset]]></category>
+		<category><![CDATA[Verso]]></category>
+		<guid isPermaLink="false">https://www.frenchweb.fr/?p=463865</guid>
+
+					<description><![CDATA[<p>L’automatisation des entretiens et de l’analyse modifie les coûts de production des études. Elle ouvre aussi une négociation sur leur prix, leur fréquence et la place du conseil. Pour les annonceurs comme pour les prestataires, les gains dépendront du recrutement des participants, du travail humain conservé et de l’usage réel des résultats. Une étude consommateurs &#8230;</p>
+<p>L’article <a rel="nofollow" href="https://www.frenchweb.fr/etudes-consommateurs-ce-que-lia-change-dans-leconomie-du-metier/463865">Études consommateurs : ce que l’IA change dans l’économie du métier</a> est apparu en premier sur <a rel="nofollow" href="https://www.frenchweb.fr">FRENCHWEB.FR : innovation, tech, network</a>.</p>
+]]></description>
+		
+		
+		
+		<post-id xmlns="com-wordpress:feed-additions:1">463865</post-id>	</item>
+<item>
+		<title>Sécuriser ses actifs crypto : les bonnes pratiques du portefeuille matériel aux réseaux sociaux</title>
+		<link>https://www.frenchweb.fr/securiser-ses-actifs-crypto-les-bonnes-pratiques-du-portefeuille-materiel-aux-reseaux-sociaux/463899</link>
+		
+		<pubDate>Mon, 12 Oct 2026 08:13:34 +0000</pubDate>
+				<category><![CDATA[CYBER IRL]]></category>
+		<category><![CDATA[EXPERIENCES]]></category>
+		<guid isPermaLink="false">https://www.frenchweb.fr/?p=463899</guid>
+
+					<description><![CDATA[<p>Le vol de crypto-actifs peut commencer par le piratage d’un compte sur une plateforme, la compromission d’un portefeuille logiciel ou l’altération d’un appareil matériel. Il peut aussi résulter d’une escroquerie : faux site d’investissement, faux support technique ou message envoyé depuis un compte usurpé. À ces risques s’ajoutent le chantage en ligne et les agressions &#8230;</p>
+<p>L’article <a rel="nofollow" href="https://www.frenchweb.fr/securiser-ses-actifs-crypto-les-bonnes-pratiques-du-portefeuille-materiel-aux-reseaux-sociaux/463899">Sécuriser ses actifs crypto : les bonnes pratiques du portefeuille matériel aux réseaux sociaux</a> est apparu en premier sur <a rel="nofollow" href="https://www.frenchweb.fr">FRENCHWEB.FR : innovation, tech, network</a>.</p>
+]]></description>
+		
+		
+		
+		<post-id xmlns="com-wordpress:feed-additions:1">463899</post-id>	</item>
+</channel>
+</rss>

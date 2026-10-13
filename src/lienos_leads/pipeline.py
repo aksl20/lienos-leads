@@ -10,13 +10,14 @@ import httpx
 from .config import Config
 from .digest import send_email, write_files
 from .enrich import Enricher
-from .models import Lead
+from .models import Lead, Segment
 from .scoring import Scorer
 from .sources import france_travail, freework_apify, malt_mail, rss
 from .store import Store
 
 log = logging.getLogger(__name__)
 
+LEVEE_DEDUP_DAYS = 30  # une même levée est reprise par plusieurs médias, parfois sur plusieurs jours
 USER_AGENT = "lienos-leads/0.1 (+https://lienos.fr; contact@lienos.fr)"
 
 
@@ -66,12 +67,16 @@ def run(cfg: Config, *, client: httpx.Client | None = None, llm_client=None,
         scorer = Scorer(cfg.scoring, store.feedback_examples(), client=llm_client)
         scorer.score(candidates)
 
-        # Les levées n'ont un nom d'entreprise qu'après le LLM : on applique alors les exclusions
-        for lead in candidates:
+        # Les levées n'ont un nom d'entreprise qu'après le LLM : on applique alors les exclusions.
+        # Meilleur score d'abord, pour garder le meilleur article quand plusieurs couvrent la même levée.
+        for lead in sorted(candidates, key=lambda l: -(l.score or 0)):
             if lead.company and not lead.company_info:
                 enricher.apply(lead)
-                if lead.excluded_reason:
-                    lead.score = 0
+            if (not lead.excluded_reason and lead.segment == Segment.LEVEE
+                    and store.levee_already_seen(lead.company_key, lead.fingerprint, LEVEE_DEDUP_DAYS)):
+                lead.excluded_reason = "levée déjà signalée par un autre article"
+            if lead.excluded_reason:
+                lead.score = 0
             store.save(lead)
 
         selected = [l for l in candidates

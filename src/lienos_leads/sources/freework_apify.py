@@ -3,7 +3,8 @@
 Avant de l'activer : relire les CGU de Free-Work. Tarif de l'acteur
 koatiromeo/french-it-contract-market : 0,008 $ par mission livrée, plus 0,10 $ par benchmark
 de TJM (computeRateBenchmark, à laisser à false). Son entrée se règle dans [apify.input]
-de config.toml : sources, query, maxMissions, sinceDays, onlyNewSinceLastRun.
+de config.toml : sources, maxMissions, sinceDays, onlyNewSinceLastRun ; les mots-clés
+vont dans [apify] queries (un run par mot-clé, car l'acteur exige tous les mots à la fois).
 """
 
 from __future__ import annotations
@@ -68,24 +69,29 @@ def to_lead(item: dict) -> Lead:
     )
 
 
-def run_actor(cfg: ApifyConfig, client: httpx.Client) -> list[dict]:
-    """Lance l'acteur puis attend sa fin : l'appel synchrone d'Apify est limité à 300 s."""
+def _headers() -> dict:
     # En en-tête et non dans l'URL : httpx journalise les URL complètes
-    headers = {"Authorization": f"Bearer {secret('APIFY_TOKEN', required=True)}"}
-    resp = client.post(START_URL.format(actor=cfg.actor), headers=headers, json=cfg.input)
+    return {"Authorization": f"Bearer {secret('APIFY_TOKEN', required=True)}"}
+
+
+def start_run(cfg: ApifyConfig, client: httpx.Client, run_input: dict) -> dict:
+    resp = client.post(START_URL.format(actor=cfg.actor), headers=_headers(), json=run_input)
     resp.raise_for_status()
-    run = resp.json()["data"]
-    deadline = time.monotonic() + MAX_WAIT
+    return resp.json()["data"]
+
+
+def wait_for_items(run: dict, client: httpx.Client, deadline: float) -> list[dict]:
+    """Attend la fin du run : l'appel synchrone d'Apify est limité à 300 s."""
     while run["status"] in ("READY", "RUNNING"):
         if time.monotonic() > deadline:
             raise TimeoutError(f"run Apify {run['id']} toujours en cours après {MAX_WAIT} s")
-        resp = client.get(RUN_URL.format(run_id=run["id"]), headers=headers,
+        resp = client.get(RUN_URL.format(run_id=run["id"]), headers=_headers(),
                           params={"waitForFinish": WAIT_STEP}, timeout=WAIT_STEP + 30)
         resp.raise_for_status()
         run = resp.json()["data"]
     if run["status"] != "SUCCEEDED":
         raise RuntimeError(f"run Apify {run['id']} terminé en {run['status']}")
-    resp = client.get(ITEMS_URL.format(dataset_id=run["defaultDatasetId"]), headers=headers,
+    resp = client.get(ITEMS_URL.format(dataset_id=run["defaultDatasetId"]), headers=_headers(),
                       params={"format": "json"})
     resp.raise_for_status()
     return resp.json()
@@ -94,7 +100,22 @@ def run_actor(cfg: ApifyConfig, client: httpx.Client) -> list[dict]:
 def fetch(cfg: ApifyConfig, client: httpx.Client) -> list[Lead]:
     if not cfg.enabled:
         return []
-    leads = [to_lead(item) for item in run_actor(cfg, client)]
-    kept = [l for l in leads if l.daily_rate is None or l.daily_rate >= cfg.min_daily_rate]
+    # L'acteur exige tous les mots de « query » à la fois : un run par mot-clé, lancés ensemble
+    inputs = [{**cfg.input, "query": q} for q in cfg.queries] or [cfg.input]
+    runs = [(i.get("query", ""), start_run(cfg, client, i)) for i in inputs]
+    deadline = time.monotonic() + MAX_WAIT
+    leads: dict[str, Lead] = {}
+    for query, run in runs:
+        try:
+            items = wait_for_items(run, client, deadline)
+        except (httpx.HTTPError, RuntimeError, TimeoutError) as exc:
+            log.warning("Free-Work (Apify) %r en échec : %s", query, exc)  # les autres continuent
+            continue
+        log.info("Free-Work (Apify) %r : %d missions", query, len(items))
+        for item in items:
+            lead = to_lead(item)
+            leads.setdefault(lead.fingerprint, lead)
+    kept = [l for l in leads.values()
+            if l.daily_rate is None or l.daily_rate >= cfg.min_daily_rate]
     log.info("Free-Work (Apify) : %d missions, %d au-dessus du TJM plancher", len(leads), len(kept))
     return kept

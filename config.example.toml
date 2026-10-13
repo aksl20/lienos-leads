@@ -36,17 +36,23 @@ max_results_per_keyword = 150
 
 [rss]
 enabled = true
-# Google Alerts : créer l'alerte sur google.com/alerts, « Envoyer à : Flux RSS », coller l'URL ici.
-# Vérifier l'URL du flux Maddyness avant de l'activer.
-include_keywords = [
-  "lève", "levée", "millions", "seed", "série a", "series a",
-  "intelligence artificielle", "IA", "machine learning", "santé", "medtech",
-  "biotech", "pathologie", "diagnostic", "omics",
+# Un article est retenu s'il contient au moins un mot de chaque liste (mots entiers).
+include_keywords = [        # signal de financement
+  "lève", "lèvent", "levée", "levé", "millions", "seed", "série a", "series a",
+  "série b", "series b", "tour de table",
+]
+topic_keywords = [          # thème ; liste vide = pas de filtre thématique
+  "intelligence artificielle", "IA", "AI", "machine learning", "deep learning", "LLM",
+  "santé", "medtech", "biotech", "healthtech", "pathologie", "diagnostic", "omics",
+  "génomique", "imagerie", "data",
 ]
 
 [rss.feeds]
-# maddyness = "https://www.maddyness.com/feed/"
-# alerte_ia_sante = "https://www.google.com/alerts/feeds/XXXXXXXX/YYYYYYYY"
+maddyness = "https://www.maddyness.com/feed/"
+frenchweb = "https://www.frenchweb.fr/feed"
+# Recherches Google Actualités (sans compte) ; une alerte Google en mode « Flux RSS » marche aussi.
+gnews_levee_ia_sante = "https://news.google.com/rss/search?q=%28l%C3%A8ve%20OR%20%22lev%C3%A9e%20de%20fonds%22%29%20%28%22intelligence%20artificielle%22%20OR%20IA%29%20%28sant%C3%A9%20OR%20medtech%20OR%20biotech%29%20when%3A7d&hl=fr&gl=FR&ceid=FR:fr"
+gnews_levee_ia = "https://news.google.com/rss/search?q=startup%20%22l%C3%A8ve%22%20%22millions%22%20%28%22intelligence%20artificielle%22%20OR%20IA%29%20when%3A3d&hl=fr&gl=FR&ceid=FR:fr"
 
 [malt_mail]
 enabled = false             # activer après avoir branché les alertes Malt sur contact@lienos.fr
@@ -59,11 +65,17 @@ lookback_days = 2
 enabled = false             # relire les CGU de Free-Work avant d'activer
 actor = "koatiromeo~french-it-contract-market"
 min_daily_rate = 600        # comparé au haut de la fourchette ; les missions sans TJM sont gardées
+queries = [                 # un run par mot-clé : l'acteur exige tous les mots d'une requête à la fois
+  "machine learning",
+  "data scientist",
+  "LLM",
+  "deep learning",
+  "computer vision",
+]
 # Entrée de l'acteur (0,008 $ par mission livrée) : en mode incrémental, seules les nouvelles sont facturées
 [apify.input]
 sources = ["free-work"]
-query = "machine learning"  # tous les mots doivent figurer dans le titre, la description ou les compétences
-maxMissions = 200
+maxMissions = 50            # par mot-clé
 sinceDays = 3
 contractorOnly = true
 onlyNewSinceLastRun = true

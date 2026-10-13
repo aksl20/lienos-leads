@@ -7,7 +7,7 @@ import sqlite3
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from .models import Lead, Status
+from .models import Lead, Segment, Status
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS leads (
@@ -57,6 +57,17 @@ class Store:
         row = self.conn.execute(
             "SELECT 1 FROM leads WHERE company_key = ? AND status IN (?, ?) AND status_at >= ?",
             (company_key, Status.CONTACTE.value, Status.REPONDU.value, since),
+        ).fetchone()
+        return row is not None
+
+    def levee_already_seen(self, company_key: str, lead_id: str, days: int) -> bool:
+        """Vrai si une autre actualité de la même entreprise a déjà été enregistrée récemment."""
+        if not company_key:
+            return False
+        since = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
+        row = self.conn.execute(
+            "SELECT 1 FROM leads WHERE company_key = ? AND segment = ? AND id != ? AND first_seen >= ?",
+            (company_key, Segment.LEVEE.value, lead_id, since),
         ).fetchone()
         return row is not None
 
